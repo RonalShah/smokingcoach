@@ -1,8 +1,18 @@
 import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Button, Divider, FormControl, Grid, InputLabel, MenuItem, Paper, Select } from '@material-ui/core';
+import { Box, Button, Divider, Fade, FormControl, Grid, InputLabel, MenuItem, Paper, Select } from '@material-ui/core';
 import SmokingRooms from '@material-ui/icons/SmokingRooms';
+import dayjs from 'dayjs';
+import TriggerSelect from './menuselectors/TriggerSelect';
+import LocationSelect from './menuselectors/LocationSelect';
+import { useInput } from '../../mainProvider';
+import WithSelect from './menuselectors/WithSelect';
+import FeelingSelect from './menuselectors/FeelingSelect';
+import TimeSelect from './menuselectors/TimeSelect';
+import NeedSelect from './menuselectors/NeedSelect';
+import AddButton from './menuselectors/AddButton';
+import NeedSlider from './menuselectors/NeedSlider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
     margin: 5
 
   },
+  textField: {
+    textAlign: "center",
+  },
 
   formControl: {
     margin: theme.spacing(1),
@@ -29,20 +42,20 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: 5,
     marginBottom: 10
-  }
+  },
+
 }));
 
 export default function InputForm() {
+
+  const { smokingData, dispatch } = useInput();
   const classes = useStyles();
 
-  const [need, setNeed] = useState('');
 
 
-  var date = new Date()
-  var hh = date.getHours()
-  var mm = date.getMinutes()
-  
-
+  const userName = "Ronal Shah"
+  const today = dayjs(Date()).format("DD-MMM")
+  var cost = 10.40
 
   return (
     <Grid container 
@@ -50,114 +63,36 @@ export default function InputForm() {
     style={{alignItems:"center", backgroundColor:"#333", padding: 20}}>
 
     < Paper className={classes.paper}>
-    
       <Box>
-        <h4>Ronal Shah  |  31st March  | 10.40</h4>
+        <h4>{userName} |  {today} | {`$`+cost} </h4>
       </Box>
-
     </Paper>
 
 
 
     < Paper className={classes.paper} >
 
-    <form className={classes.root} noValidate autoComplete="off">
+      <form className={classes.root} noValidate autoComplete="off">
+      
+          <Box>
 
-      <div>
+              <TimeSelect/>
 
+              <TriggerSelect/>
 
-        <div>
-          <TextField
-              id="outlined-read-only-input"
-              label="Time"
-              defaultValue={hh + `:` + mm}
-              InputProps={{
-                readOnly: true,
-              }}
-              variant="outlined"
-            />
-        </div>
+              <NeedSelect/>
 
-        <div>
-          <TextField
-            required
-            id="outlined-required"
-            label="Feeling"
-            defaultValue="Feeling"
-            variant="outlined"
-          />
-        </div>
+              <LocationSelect/>
 
-        <div>
-          <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="demo-simple-select-outlined-label">Need Rating</InputLabel>
-            <Select
-              required
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value={need}
-              onChange={(e)=>setNeed(e.target.value)}
-              label="Need"
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
+              <WithSelect/>
 
+              <FeelingSelect/>
 
+              <AddButton/>
 
-        <div>
-          <TextField
-            required
-            id="outlined-required"
-            label="With"
-            defaultValue="With"
-            variant="outlined"
-          />
-        </div>
-        
-        
-        <div>
-          <TextField
-            required
-            id="outlined-required"
-            label="Location"
-            defaultValue="Location"
-            variant="outlined"
-          />
-        </div>
+          </Box>
 
-
-        <div>
-          <TextField
-            required
-            id="outlined-required"
-            label="Trigger"
-            defaultValue="Trigger"
-            variant="outlined"
-          />
-        </div>
-              
-      <div>
-        <Button
-          variant="contained"
-          color="secondary"
-          className={classes.button}
-          startIcon={<SmokingRooms/>}
-          >Save</Button>
-      </div>
-
-    
-    </div>
-
-    </form>
+      </form>
 
     </Paper>
     </Grid>

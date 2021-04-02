@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,13 +12,15 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useHistory } from 'react-router';
+import { auth } from '../../firebase';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+        Stop Smoking Coach
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -47,7 +49,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignUp() {
+  
   const classes = useStyles();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [loading, setLoading] = useState("");
+  const history = useHistory();
+
+  const emailSignUp = (event) => {
+    event.preventDefault();
+    setLoading("signUp");
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        history.push("/Home");
+        setLoading("");
+      })
+      .catch((err) => {
+        setLoading("");
+        alert("Failed to Sign Up : " + err);
+      });
+    if (auth.currentUser != null) {
+      auth.currentUser.updateProfile({
+          displayName: userName
+      }).then(function () {
+          console.log("Display Name Updated");
+      }, function (error) {
+          console.log("Error happened");
+      });
+    }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -64,16 +97,17 @@ export default function SignUp() {
             <Grid item xs={12} sm={6}>
               <TextField
                 autoComplete="fname"
-                name="firstName"
+                name="userName"
                 variant="outlined"
                 required
                 fullWidth
-                id="firstName"
-                label="First Name"
+                id="userName"
+                label="User Name"
                 autoFocus
+                onChange={(e) => setUserName(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/*<Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
                 required
@@ -83,7 +117,7 @@ export default function SignUp() {
                 name="lastName"
                 autoComplete="lname"
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -93,6 +127,7 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -105,6 +140,7 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -120,12 +156,13 @@ export default function SignUp() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={emailSignUp}
           >
             Sign Up
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
